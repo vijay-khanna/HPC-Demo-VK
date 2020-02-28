@@ -293,6 +293,11 @@ sinfo
 
 
 ```
+# Configure aws cli on Master Node
+```
+# run aws configure, just specify region, keep all others as empty
+aws configure
+```
 
 ##Auto Scaling
 ```
@@ -306,10 +311,16 @@ cat > sleep_script.sbatch << EOF
 
 sleep 300
 EOF
+```
 
 ##execute script
+```
 sbatch sleep_script.sbatch
 
+aws ec2 describe-instances --query 'Reservations[*].Instances[*].[Tags[?Key==`Name`]| [0].Value,InstanceType, PrivateIpAddress, PublicIpAddress]' --filters Name=instance-state-name,Values=running --output table
+```
+# check Status after you see Compute nodes spin up
+```
 sinfo
 
 
