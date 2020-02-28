@@ -294,4 +294,34 @@ sinfo
 
 ```
 
+##Auto Scaling
+```
+#launch a 5 minutes sleep job
 
+cat > sleep_script.sbatch << EOF
+#!/bin/bash
+#SBATCH --job-name=hello-world-job
+#SBATCH --ntasks=2
+#SBATCH --output=%x_%j.out
+
+sleep 300
+EOF
+
+##execute script
+sbatch sleep_script.sbatch
+
+sinfo
+
+
+sbatch
+
+
+## check Auto-Scaling in Console
+
+```
+
+## Deleting Cluster
+```
+pcluster delete hpclab-${HPC_CLUSTER_NAME}
+
+```
