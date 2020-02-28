@@ -54,6 +54,26 @@ cat << EOF
 Bucket Name = bucket-${BUCKET_POSTFIX}
 *****************************************
 EOF
+
+
+echo "export BUCKET_POSTFIX=${BUCKET_POSTFIX}" >> ~/.bash_profile 
+echo "export Temp_S3_BUCKET=bucket-${BUCKET_POSTFIX}" >> ~/.bash_profile ; tail ~/.bash_profile
+
+```
+
+Download a file from the internet to your Cloud9 instance. For example, download synthetic subsurface model https://wiki.seg.org/wiki/SEG_C3_45_shot. 
+
+```
+wget http://s3.amazonaws.com/open.source.geoscience/open_data/seg_eage_salt/SEG_C3NA_Velocity.sgy
+
+#Copy the file to S3 bucket
+aws s3 cp ./SEG_C3NA_Velocity.sgy s3://bucket-${BUCKET_POSTFIX}/SEG_C3NA_Velocity.sgy
+
+#Verify the File-copy operaton
+aws s3 ls s3://bucket-${BUCKET_POSTFIX}/
+
+#Remove file from local achine
+rm SEG_C3NA_Velocity.sgy
 ```
 
 
