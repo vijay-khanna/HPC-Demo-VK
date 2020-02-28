@@ -32,3 +32,12 @@ Saving the Cluster Name to bash-profile. In case the Cloud9 Instance Reboots, th
 ```
 echo "export HPC_CLUSTER_NAME=${HPC_CLUSTER_NAME}" >> ~/.bash_profile
 ```
+
+Configure AWS CLI
+```
+aws configure
+# Do not enter Access key/Secret and output format. Just Enter the region name. 
+```
+
+
+
