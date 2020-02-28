@@ -65,11 +65,12 @@ chmod 600 ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
 export master_node_ssh_key=lab-ssh-key-${HPC_CLUSTER_NAME}
 echo "export master_node_ssh_key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_profile ; tail ~/.bash_profile
 
-# To Delete the Jey
-##aws ec2 delete-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME
 
 #Check Key creation
-aws ec2 describe-key-pairs
+aws ec2 describe-key-pairs --key-name lab-ssh-key-$HPC_CLUSTER_NAME
+
+# To Delete the Jey
+##aws ec2 delete-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME
 
 ```
 
