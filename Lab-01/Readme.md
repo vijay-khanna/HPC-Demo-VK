@@ -85,5 +85,55 @@ echo "export master-node-ssh-key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_pro
 
 # To Delete the Jey
 ##aws ec2 delete-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME
+
+#Check Key creation
+aws ec2 describe-key-pairs
+
+
+#Copy the File from S3 Bucket
+aws s3 cp s3://bucket-${BUCKET_POSTFIX}/SEG_C3NA_Velocity.sgy .
+
 ```
 
+###Setting Up and Configuring Parallel Cluster
+
+```
+# optionally, you might need to install pip first
+# sudo easy_install pip
+
+pip-3.6 install aws-parallelcluster -U --user
+
+```
+
+# Create Config File for Parallel Cluster
+```
+IFACE=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/)
+SUBNET_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/subnet-id)
+VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/vpc-id)
+
+mkdir -p ~/.parallelcluster
+cat > ~/.parallelcluster/config-$HPC_CLUSTER_NAME << EOF
+[aws]
+aws_region_name = us-east-1
+
+[cluster default]
+key_name = master-node-ssh-key
+vpc_settings = public
+
+[vpc public]
+vpc_id = ${VPC_ID}
+master_subnet_id = ${SUBNET_ID}
+
+[global]
+cluster_template = default
+update_check = false
+sanity_check = true
+
+[aliases]
+ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
+EOF
+
+clear
+echo "####################################################################"
+cat  ~/.parallelcluster/config-$HPC_CLUSTER_NAME
+```
