@@ -112,7 +112,7 @@ SUBNET_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interf
 VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/vpc-id)
 
 mkdir -p ~/.parallelcluster
-cat > ~/.parallelcluster/config-$HPC_CLUSTER_NAME << EOF
+cat > ~/.parallelcluster/config << EOF
 [aws]
 aws_region_name = us-east-1
 
@@ -133,7 +133,8 @@ sanity_check = true
 ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
 EOF
 
-clear
-echo "####################################################################"
-cat  ~/.parallelcluster/config-$HPC_CLUSTER_NAME
+
+# Copying to environment folder for reference
+cp ~/.parallelcluster/ ~/environment/parallelcluster-config-$HPC_CLUSTER_NAME
+
 ```
