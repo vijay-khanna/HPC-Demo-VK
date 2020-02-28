@@ -116,6 +116,7 @@ pip-3.6 install aws-parallelcluster -U --user
 
 # Create Config File for Parallel Cluster
 ```
+<sub><sup>
 IFACE=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/)
 SUBNET_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/subnet-id)
 VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/vpc-id)
@@ -142,6 +143,7 @@ sanity_check = true
 ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
 EOF
 
+</sup></sub>
 
 # Copying to environment folder for reference
 cp ~/.parallelcluster/config ~/environment/parallelcluster-config-$HPC_CLUSTER_NAME
