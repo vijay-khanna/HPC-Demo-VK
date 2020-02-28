@@ -35,15 +35,12 @@ echo "export HPC_CLUSTER_NAME=${HPC_CLUSTER_NAME}" >> ~/.bash_profile
 
 Configure AWS CLI
 ```
+# run aws configure command. Do not enter Access key/Secret and output format. Just Enter the region name. 
 
 sudo yum install -y jq
 cloud9_region=`curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region` ; echo $cloud9_region
 aws configure set default.region $cloud9_region
 
-
-
-# run aws configure command. Do not enter Access key/Secret and output format. Just Enter the region name. 
-aws configure
 
 
 # Test aws CLI
@@ -275,7 +272,13 @@ sinfo
 # Configure aws cli on Master Node
 ```
 # run aws configure, just specify region, keep all others as empty
-aws configure
+
+sudo yum install -y jq
+cloud9_region=`curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region` ; echo $cloud9_region
+aws configure set default.region $cloud9_region
+
+aws ec2 describe-instances
+
 ```
 
 ##Auto Scaling
