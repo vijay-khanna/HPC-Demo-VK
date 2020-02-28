@@ -206,3 +206,92 @@ pcluster create hpclab-${HPC_CLUSTER_NAME} -c my-cluster-config-${HPC_CLUSTER_NA
 
 ```
 
+# Login to Cluster and run basic Hello World job
+```
+#list existing clusters
+pcluster list --color
+
+
+pcluster ssh hpclab-${HPC_CLUSTER_NAME} -i ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
+
+##List existing partitions and nodes per partition
+sinfo
+
+##List jobs in the queues or running
+squeue
+
+##List available modules
+module av
+
+##Load a particular module. In this case, this command loads IntelMPI in your environment and checks the path of mpirun
+module load intelmpi
+which mpirun
+
+
+##List mounted volumes
+showmount -e localhost
+```
+
+
+##Create the Hello World Application
+```
+cat > mpi_hello_world.c << EOF
+#include <stdio.h>
+#include <stdlib.h>
+#include <mpi.h>
+#include <unistd.h>
+
+int main(int argc, char **argv){
+  int step, node, hostlen;
+  char hostname[256];
+  hostlen = 255;
+
+  MPI_Init(&argc,&argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &node);
+  MPI_Get_processor_name(hostname, &hostlen);
+
+  for (step = 1; step < 5; step++) {
+    printf("Hello World from Step %d on Node %d, (%s)\n", step, node, hostname);
+    sleep(2);
+  }
+
+ MPI_Finalize();
+}
+EOF
+
+module load intelmpi
+mpicc mpi_hello_world.c -o mpi_hello_world
+
+
+```
+
+#test your application locally on the head node
+```
+mpirun -n 4 ./mpi_hello_world
+```
+
+#Create a Submission Script
+```
+cat > submission_script.sbatch << EOF
+#!/bin/bash
+#SBATCH --job-name=hello-world-job
+#SBATCH --ntasks=4
+#SBATCH --output=%x_%j.out
+
+mpirun ./mpi_hello_world
+EOF
+```
+
+#Submit your First Job
+```
+sbatch submission_script.sbatch
+
+squeue
+
+
+sinfo
+
+
+```
+
+
