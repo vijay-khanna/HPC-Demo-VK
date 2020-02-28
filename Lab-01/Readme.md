@@ -35,8 +35,25 @@ echo "export HPC_CLUSTER_NAME=${HPC_CLUSTER_NAME}" >> ~/.bash_profile
 
 Configure AWS CLI
 ```
+# run aws configure command. Do not enter Access key/Secret and output format. Just Enter the region name. 
 aws configure
-# Do not enter Access key/Secret and output format. Just Enter the region name. 
+
+
+# Test aws CLI
+aws ec2 describe-instances
+```
+
+Create a Bucket to store config and temp files. 
+
+```
+BUCKET_POSTFIX=$(uuidgen --random | cut -d'-' -f1)
+aws s3 mb s3://bucket-${BUCKET_POSTFIX}
+
+cat << EOF
+***** Take Note of Your Bucket Name *****
+Bucket Name = bucket-${BUCKET_POSTFIX}
+*****************************************
+EOF
 ```
 
 
