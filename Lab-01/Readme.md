@@ -50,38 +50,11 @@ aws configure
 aws ec2 describe-instances
 ```
 
-Create a Bucket to store config and temp files. 
-
-```
-BUCKET_POSTFIX=$(uuidgen --random | cut -d'-' -f1)
-aws s3 mb s3://bucket-${BUCKET_POSTFIX}
-
-cat << EOF
-***** Take Note of Your Bucket Name *****
-Bucket Name = bucket-${BUCKET_POSTFIX}
-*****************************************
-EOF
-
-
-echo "export BUCKET_POSTFIX=${BUCKET_POSTFIX}" >> ~/.bash_profile 
-export BUCKET_POSTFIX=${BUCKET_POSTFIX}
-echo "export Temp_S3_BUCKET=bucket-${BUCKET_POSTFIX}" >> ~/.bash_profile ; tail ~/.bash_profile
-
-```
-
 Download a file from the internet to your Cloud9 instance. For example, download synthetic subsurface model https://wiki.seg.org/wiki/SEG_C3_45_shot. 
 
 ```
 wget http://s3.amazonaws.com/open.source.geoscience/open_data/seg_eage_salt/SEG_C3NA_Velocity.sgy
 
-#Copy the file to S3 bucket
-aws s3 cp ./SEG_C3NA_Velocity.sgy s3://bucket-${BUCKET_POSTFIX}/SEG_C3NA_Velocity.sgy
-
-#Verify the File-copy operaton
-aws s3 ls s3://bucket-${BUCKET_POSTFIX}/
-
-#Remove file from local achine
-rm SEG_C3NA_Velocity.sgy
 ```
 
 Create a Key for SSH to Master Node
@@ -98,10 +71,6 @@ echo "export master_node_ssh_key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_pro
 #Check Key creation
 aws ec2 describe-key-pairs
 
-
-#Copy the File from S3 Bucket
-aws s3 cp s3://bucket-${BUCKET_POSTFIX}/SEG_C3NA_Velocity.sgy .
-
 ```
 
 ###Setting Up and Configuring Parallel Cluster
@@ -116,7 +85,7 @@ pip-3.6 install aws-parallelcluster -U --user
 
 # Create Config File for Parallel Cluster
 ```
-<sub><sup>
+
 IFACE=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/)
 SUBNET_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/subnet-id)
 VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/vpc-id)
@@ -143,7 +112,7 @@ sanity_check = true
 ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
 EOF
 
-</sup></sub>
+
 
 # Copying to environment folder for reference
 cp ~/.parallelcluster/config ~/environment/parallelcluster-config-$HPC_CLUSTER_NAME
