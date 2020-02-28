@@ -135,6 +135,67 @@ EOF
 
 
 # Copying to environment folder for reference
-cp ~/.parallelcluster/ ~/environment/parallelcluster-config-$HPC_CLUSTER_NAME
+cp ~/.parallelcluster/config ~/environment/parallelcluster-config-$HPC_CLUSTER_NAME
 
 ```
+
+Check the Version of Parallel Cluster
+```
+pcluster version
+
+which pcluster
+
+export PATH=`which pcluster`:$PATH  ; echo $PATH
+echo "export PATH=${PATH}" >> ~/.bash_profile ; tail ~/.bash_profile
+
+```
+# Creating Cluster Config
+
+```
+IFACE=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/)
+SUBNET_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/subnet-id)
+VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interfaces/macs/${IFACE}/vpc-id)
+AZ=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
+REGION=${AZ::-1}
+
+cd ~/environment
+cat > my-cluster-config-$HPC_CLUSTER_NAME.conf << EOF
+[aws]
+aws_region_name = ${REGION}
+
+[global]
+cluster_template = default
+update_check = false
+sanity_check = true
+
+[cluster default]
+key_name = $master-node-ssh-key
+vpc_settings = public
+ebs_settings = myebs
+compute_instance_type = c5.xlarge
+master_instance_type = c5.xlarge
+cluster_type = ondemand
+placement_group = DYNAMIC
+placement = compute
+initial_queue_size = 0
+max_queue_size = 8
+disable_hyperthreading = true
+s3_read_write_resource = *
+scheduler = slurm
+
+
+[vpc public]
+vpc_id = ${VPC_ID}
+master_subnet_id = ${SUBNET_ID}
+
+[ebs myebs]
+shared_dir = /shared
+volume_type = gp2
+volume_size = 20
+
+[aliases]
+ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
+EOF
+```
+
+
