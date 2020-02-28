@@ -76,5 +76,14 @@ aws s3 ls s3://bucket-${BUCKET_POSTFIX}/
 rm SEG_C3NA_Velocity.sgy
 ```
 
+Create a Key for SSH to Master Node
+```
+aws ec2 create-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME --query KeyMaterial --output text > ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
+chmod 600 ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
 
+echo "export master-node-ssh-key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_profile ; tail ~/.bash_profile
+
+# To Delete the Jey
+##aws ec2 delete-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME
+```
 
