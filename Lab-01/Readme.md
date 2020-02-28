@@ -57,6 +57,7 @@ EOF
 
 
 echo "export BUCKET_POSTFIX=${BUCKET_POSTFIX}" >> ~/.bash_profile 
+export BUCKET_POSTFIX=${BUCKET_POSTFIX}
 echo "export Temp_S3_BUCKET=bucket-${BUCKET_POSTFIX}" >> ~/.bash_profile ; tail ~/.bash_profile
 
 ```
@@ -81,7 +82,8 @@ Create a Key for SSH to Master Node
 aws ec2 create-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME --query KeyMaterial --output text > ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
 chmod 600 ~/.ssh/lab-ssh-key-$HPC_CLUSTER_NAME
 
-echo "export master-node-ssh-key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_profile ; tail ~/.bash_profile
+export master_node_ssh_key=lab-ssh-key-${HPC_CLUSTER_NAME}
+echo "export master_node_ssh_key=lab-ssh-key-${HPC_CLUSTER_NAME}" >> ~/.bash_profile ; tail ~/.bash_profile
 
 # To Delete the Jey
 ##aws ec2 delete-key-pair --key-name lab-ssh-key-$HPC_CLUSTER_NAME
@@ -159,7 +161,7 @@ AZ=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
 REGION=${AZ::-1}
 
 cd ~/environment
-cat > my-cluster-config-$HPC_CLUSTER_NAME.conf << EOF
+cat > my-cluster-config-${HPC_CLUSTER_NAME}.conf << EOF
 [aws]
 aws_region_name = ${REGION}
 
@@ -169,7 +171,7 @@ update_check = false
 sanity_check = true
 
 [cluster default]
-key_name = $master-node-ssh-key
+key_name = ${master_node_ssh_key}
 vpc_settings = public
 ebs_settings = myebs
 compute_instance_type = c5.xlarge
@@ -182,7 +184,7 @@ max_queue_size = 8
 disable_hyperthreading = true
 s3_read_write_resource = *
 scheduler = slurm
-
+#For c5n.18x+ : enable_efa = compute
 
 [vpc public]
 vpc_id = ${VPC_ID}
@@ -191,11 +193,16 @@ master_subnet_id = ${SUBNET_ID}
 [ebs myebs]
 shared_dir = /shared
 volume_type = gp2
-volume_size = 20
+volume_size = 50
 
 [aliases]
 ssh = ssh {CFN_USER}@{MASTER_IP} {ARGS}
 EOF
 ```
 
+# Build the ParallelCluster
+```
+pcluster create hpclab-${HPC_CLUSTER_NAME} -c my-cluster-config-${HPC_CLUSTER_NAME}.conf
+
+```
 
