@@ -91,10 +91,10 @@ VPC_ID=$(curl --silent http://169.254.169.254/latest/meta-data/network/interface
 mkdir -p ~/.parallelcluster
 cat > ~/.parallelcluster/config << EOF
 [aws]
-aws_region_name = us-east-1
+aws_region_name = ${cloud9_region}
 
 [cluster default]
-key_name = master-node-ssh-key
+key_name = ${master_node_ssh_key}
 vpc_settings = public
 
 [vpc public]
