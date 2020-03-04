@@ -24,7 +24,8 @@ Create a **new environment** e.g. "Cloud9 Lab - Containerized Nodejs application
 
 * **Capture Cluster Unique Name. This Name will be used to create a ssh key pair as well:**
 ```
-read -p "Enter a unique HPC cluster Name : " HPC_CLUSTER_NAME ; 
+
+read -p "Enter a unique HPC cluster Name :.. * * DO NOT USE UNDERSCORE in the Name. Use only - Hyphens if required " HPC_CLUSTER_NAME ; 
 echo -e "\n * * \e[106m ...HPC Cluster Name to be used is... : "$HPC_CLUSTER_NAME"\e[0m \n"
 
 ```
