@@ -41,6 +41,8 @@ sudo yum install -y jq
 cloud9_region=`curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region` ; echo $cloud9_region
 aws configure set default.region $cloud9_region
 
+# Delete older API Keys if they exist
+rm -vf ${HOME}/.aws/credentials
 
 
 # Test aws CLI
